@@ -754,8 +754,8 @@ for (const k in CH_OPT) CH_OPT[k].forEach((o, n) => { const c = STORY[k].stages[
 /* =====================================================================
    2) الصوت
    ===================================================================== */
-const MUSIC_TRACKS = { early: "o.mp3", late: "o2.mp3" };   // o2 يبدأ من الفصل 25
-const LATE_FROM_CHAPTER = 15;
+const MUSIC_TRACKS = { early: "o.mp3", late: "o2.mp3" };   // o2 يبدأ بعد الفصل 10 (من الفصل 11)
+const LATE_FROM_CHAPTER = 11;   // بعد الفصل العاشر
 const CLICK_FILE = "r.mp3";
 const CLUE_FILE = "p.mp3";            // صوت الحصول على دليل
 const MAX_CLUES_PER_CHAPTER = 2;      // الحد الأقصى للأدلة في كل فصل
@@ -1171,7 +1171,7 @@ Audio_.setChapter(1);
 setBackground(1);
 applyLang();
 
-// للاختبار فقط: افتح الملف بـ ?ch=25 لتسمع أغنية الفصل 25 (o2.mp3)
+// للاختبار فقط: افتح الملف بـ ?ch=11 لتسمع أغنية الفصل 11 (o2.mp3)
 const testCh = parseInt(new URLSearchParams(location.search).get("ch"), 10);
 if (testCh) { Audio_.setChapter(testCh); }
 </script>
