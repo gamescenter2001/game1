@@ -198,6 +198,31 @@ h1.title{font-family:'Amiri',serif;font-size:clamp(3rem,12vw,6rem);color:var(--g
 .tagline{text-shadow:0 0 12px rgba(212,162,76,.25)}
 .tagline,#endText{color:#fff!important}
 .navrow{display:flex;gap:10px;margin-top:14px}.navrow .btn{flex:1;min-width:0;padding:10px 12px;font-size:.9rem}.navrow .btn:disabled{opacity:.35;cursor:not-allowed}
+/* ---------- نافذة التأكيد الفاخرة ---------- */
+#confirmModal{z-index:40;background:radial-gradient(ellipse at center,rgba(20,16,8,.72),rgba(0,0,0,.9));
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);align-items:center;justify-content:center}
+#confirmModal .cbox{
+  position:relative;width:100%;max-width:400px;text-align:center;padding:34px 28px 26px;border-radius:18px;
+  background:linear-gradient(160deg,rgba(32,27,18,.97),rgba(14,15,21,.98) 55%);
+  border:1px solid rgba(212,162,76,.55);
+  box-shadow:0 0 0 1px rgba(240,200,120,.08) inset,0 30px 80px rgba(0,0,0,.75),0 0 60px rgba(212,162,76,.14);
+  animation:cpop .35s cubic-bezier(.2,.9,.3,1.2) both;overflow:hidden}
+#confirmModal .cbox::before{content:"";position:absolute;top:0;left:12%;right:12%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold2),transparent)}
+@keyframes cpop{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
+.c-ico{width:62px;height:62px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.7rem;color:var(--gold2);border:1px solid var(--gold);
+  background:radial-gradient(circle,rgba(212,162,76,.22),rgba(212,162,76,.03));box-shadow:0 0 28px rgba(212,162,76,.25)}
+.c-ico.danger{color:#ff8a80;border-color:var(--red);background:radial-gradient(circle,rgba(184,66,58,.28),rgba(184,66,58,.04));box-shadow:0 0 28px rgba(184,66,58,.3)}
+#confirmTitle{font-family:'Amiri',serif;font-size:1.9rem;color:var(--gold2);margin-bottom:8px;line-height:1.3}
+#confirmText{color:#d9d4c6;line-height:1.9;font-size:1rem;margin-bottom:24px}
+.c-btns{display:flex;gap:10px}
+.c-btns .btn{flex:1;min-width:0;padding:12px 10px;border-radius:10px;font-weight:600}
+#confirmYes{background:linear-gradient(135deg,#e2b45e,#b98530);color:#1a1307;border-color:transparent;box-shadow:0 6px 20px rgba(212,162,76,.3)}
+#confirmYes:hover{filter:brightness(1.1);color:#1a1307;background:linear-gradient(135deg,#f0c878,#c4903a)}
+#confirmYes.danger{background:linear-gradient(135deg,#c9524a,#8f2f29);color:#fff;box-shadow:0 6px 20px rgba(184,66,58,.35)}
+#confirmYes.danger:hover{color:#fff;background:linear-gradient(135deg,#d9625a,#a33a33)}
+#confirmNo{background:rgba(255,255,255,.04);border-color:var(--line)}
 </style>
 </head>
 <body>
@@ -282,6 +307,17 @@ h1.title{font-family:'Amiri',serif;font-size:clamp(3rem,12vw,6rem);color:var(--g
     <button class="btn" id="btnEndHome" data-i18n="home">القائمة الرئيسية</button>
   </div>
 </section>
+
+<!-- نافذة التأكيد -->
+<div class="modal" id="confirmModal"><div class="cbox" role="alertdialog" aria-modal="true">
+  <div class="c-ico" id="confirmIco">!</div>
+  <h3 id="confirmTitle"></h3>
+  <p id="confirmText"></p>
+  <div class="c-btns">
+    <button class="btn" id="confirmNo"></button>
+    <button class="btn" id="confirmYes"></button>
+  </div>
+</div></div>
 
 <!-- المفكرة -->
 <div class="modal" id="notesModal"><div class="box">
@@ -1139,8 +1175,31 @@ $("#btnFwd").onclick = () => { pendingClue = null; if (state.st < STAGES_PER_CHA
 $("#btnNew").onclick = () => { startGame(true); saveGame(); refreshMenu(); };
 $("#btnLang").onclick = () => { LANG = LANG === "ar" ? "en" : "ar"; try { localStorage.setItem("ls_lang", LANG); } catch (e) {} applyLang(); };
 $("#btnExit").onclick = doExit;
-$("#btnExit2").onclick = () => { if (confirm(I("ec"))) doExit(); };
-$("#btnReset").onclick = () => { if (confirm(I("rc"))) { try { localStorage.removeItem("ls_save"); } catch (e) {} closeModals(); show("menu"); refreshMenu(); } };
+/* نافذة تأكيد فاخرة في وسط الشاشة (بديل confirm) */
+const CF = {
+  ar: { rT: "مسح التقدم", eT: "الخروج من اللعبة", yes: "نعم، تابع", no: "إلغاء", exit: "خروج", reset: "نعم، امسح" },
+  en: { rT: "Erase Progress", eT: "Exit the Game", yes: "Yes, continue", no: "Cancel", exit: "Exit", reset: "Yes, erase" }
+};
+function askConfirm(title, text, yesLabel, danger, onYes) {
+  const m = $("#confirmModal"), y = $("#confirmYes"), n = $("#confirmNo");
+  $("#confirmTitle").textContent = title;
+  $("#confirmText").textContent = text.replace(/^[^:：]+[:：]\s*/, "");
+  $("#confirmIco").textContent = danger ? "⚠" : "⏻";
+  $("#confirmIco").classList.toggle("danger", !!danger);
+  y.classList.toggle("danger", !!danger);
+  y.textContent = yesLabel; n.textContent = CF[LANG].no;
+  const close = () => { m.classList.remove("open"); y.onclick = n.onclick = m.onclick = null; document.removeEventListener("keydown", key); };
+  const key = (e) => { if (e.key === "Escape") close(); };
+  y.onclick = () => { close(); onYes(); };
+  n.onclick = close;
+  m.onclick = (e) => { if (e.target === m) close(); };
+  document.addEventListener("keydown", key);
+  m.classList.add("open"); n.focus();
+}
+$("#btnExit2").onclick = () => askConfirm(CF[LANG].eT, I("ec"), CF[LANG].exit, false, doExit);
+$("#btnReset").onclick = () => askConfirm(CF[LANG].rT, I("rc"), CF[LANG].reset, true, () => {
+  try { localStorage.removeItem("ls_save"); } catch (e) {} closeModals(); show("menu"); refreshMenu();
+});
 
 
 /* =====================================================================
