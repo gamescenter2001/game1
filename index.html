@@ -196,6 +196,8 @@ h1.title{font-family:'Amiri',serif;font-size:clamp(3rem,12vw,6rem);color:var(--g
 .logo-sub{color:var(--gold2)!important;opacity:.95}
 .intro-hint{color:var(--gold)!important}
 .tagline{text-shadow:0 0 12px rgba(212,162,76,.25)}
+.tagline,#endText{color:#fff!important}
+.navrow{display:flex;gap:10px;margin-top:14px}.navrow .btn{flex:1;min-width:0;padding:10px 12px;font-size:.9rem}.navrow .btn:disabled{opacity:.35;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -231,10 +233,10 @@ h1.title{font-family:'Amiri',serif;font-size:clamp(3rem,12vw,6rem);color:var(--g
 <section class="screen" id="game">
   <header class="topbar">
     <div class="tb-main">
-      <div class="brand">الظل الأخير</div>
+      <div class="brand" data-i18n="title">الظل الأخير</div>
       <div class="tb-line">
         <span class="tb-title"><span data-i18n="chap">الفصل</span> <b id="hudChap">1</b>: <span id="hudTitle"></span></span>
-        <span class="tb-stage">المرحلة <b id="hudStage">1</b> من 10</span>
+        <span class="tb-stage"><span data-i18n="st">المرحلة</span> <b id="hudStage">1</b> <span data-i18n="of10">من 10</span></span>
       </div>
       <div class="dots" id="dots"></div>
     </div>
@@ -252,13 +254,14 @@ h1.title{font-family:'Amiri',serif;font-size:clamp(3rem,12vw,6rem);color:var(--g
         <div class="scene" id="scene"></div>
         <div id="text"></div>
         <div class="banner" id="banner">
-          <span class="b-head">🔎 تم الحصول على دليل جديد</span>
+          <span class="b-head" data-i18n="newClue">🔎 تم الحصول على دليل جديد</span>
           <span class="b-text" id="bannerText"></span>
         </div>
       </div>
       <div id="cw">
-        <div class="ask">اختر إجراءك التالي:</div>
+        <div class="ask" data-i18n="ask">اختر إجراءك التالي:</div>
         <div id="choices"></div>
+        <div class="navrow"><button class="btn" id="btnPrev" data-i18n="prev">المرحلة السابقة</button><button class="btn" id="btnFwd" data-i18n="fwd">تقدّم المرحلة</button></div>
       </div>
     </div>
   </main>
@@ -270,9 +273,9 @@ h1.title{font-family:'Amiri',serif;font-size:clamp(3rem,12vw,6rem);color:var(--g
   <h2 id="endTitle"></h2>
   <p class="tagline" id="endText"></p>
   <div class="stats">
-    <div class="stat"><b id="stClues">0</b><span>أدلة</span></div>
-    <div class="stat"><b id="stIntuition">0</b><span>حدس</span></div>
-    <div class="stat"><b id="stLogic">0</b><span>منطق</span></div>
+    <div class="stat"><b id="stClues">0</b><span data-i18n="cl">أدلة</span></div>
+    <div class="stat"><b id="stIntuition">0</b><span data-i18n="int">حدس</span></div>
+    <div class="stat"><b id="stLogic">0</b><span data-i18n="log">منطق</span></div>
   </div>
   <div class="menu-btns" style="margin-top:16px">
     <button class="btn primary" id="btnNext" data-i18n="nextC">الفصل التالي</button>
@@ -282,7 +285,7 @@ h1.title{font-family:'Amiri',serif;font-size:clamp(3rem,12vw,6rem);color:var(--g
 
 <!-- المفكرة -->
 <div class="modal" id="notesModal"><div class="box">
-  <h3>📓 مفكرة المحقق</h3>
+  <h3 data-i18n="notesT">📓 مفكرة المحقق</h3>
   <div id="notesList"></div>
   <button class="btn close" data-close>إغلاق</button>
 </div></div>
@@ -318,6 +321,10 @@ const mk = (title, outro, B) => ({ title, outro, stages: Object.fromEntries(B.ma
 const G = [["أفحص المكان بدقة","أتبع حدسي وأتحرك بهدوء"],["أطرح الأسئلة المباشرة","أترك الصمت يتكلم"],["أدوّن كل التفاصيل","أراقب من يراقبني"],["أطلب تفسيراً منطقياً","أستمع لما لا يُقال"],["أحلّل الدليل بعناية","أحتفظ به وأتابع"],["أتحرك بحذر محسوب","أواجه الخطر مباشرة"],["أقارن الروايات","أضغط على نقطة الضعف"],["أعيد ترتيب الوقائع","أثق بإحساسي الداخلي"],["أجمع القطع المتناثرة","أتبع الخيط الأخير"],["أُنهي الفصل"]];
 const mk2 = (title, outro, L, c1, c2) => ({ title, outro, stages: Object.fromEntries(L.map((l, i) => { const [sc, tx] = l.split("|"); const c = i === 4 ? c1 : i === 8 ? c2 : undefined;
   return [i + 1, { scene: sc, text: tx, choices: [{ t: G[i][0], logic: 1, clue: c }].concat(G[i][1] ? [{ t: G[i][1], intuition: 1, clue: c }] : []) }]; })) });
+
+const GE = [["Inspect the place closely","Follow my instinct, move quietly"],["Ask direct questions","Let the silence speak"],["Note every detail","Watch whoever watches me"],["Demand a logical explanation","Listen to what is unsaid"],["Analyze the evidence","Keep it and move on"],["Move with careful caution","Face the danger head-on"],["Compare the accounts","Press on the weak point"],["Rearrange the facts","Trust my inner sense"],["Gather the scattered pieces","Follow the last thread"],["End the chapter"]];
+const mk3 = (title, title_en, outro, outro_en, A, E, ca, ce) => ({ title, title_en, outro, outro_en, stages: Object.fromEntries(A.map((l, i) => { const [sc, tx] = l.split("|"), [se, te] = E[i].split("|"); const k = i === 4 ? 0 : i === 8 ? 1 : -1; const clue = k < 0 ? undefined : ca[k] + " | " + ce[k];
+  return [i + 1, { scene: sc, text: tx, en: { scene: se, text: te }, choices: [{ t: G[i][0], te: GE[i][0], logic: 1, clue }].concat(G[i][1] ? [{ t: G[i][1], te: GE[i][1], intuition: 1, clue }] : []) }]; })) });
 
 const STORY = {
   1: {
@@ -533,8 +540,7 @@ const STORY = {
     ["خشبة المسرح","في منتصف الخشبة ستارة حمراء متفحمة، وخلفها جدار ما زال يحمل ظل رجل طويل محفوراً بالسخام، كأن النار حفظته ولم تجرؤ على محوه.","أفحص الظل المحفور بدقة","أقف حيث وقف المصوّر لأرى زاويته"],
     ["اللوح الغريب","في أسفل الجدار لوح خشبي أحدث من كل ما حوله. تهمس لينا: «هنا كان إلياس يقف كل مرة يأتي.»","أنزع اللوح بحذر","أطرقه لأسمع إن كان مجوفاً"],
     ["التجويف","خلف اللوح علبة معدنية صدئة، بداخلها شريط نيغاتيف ودفتر صغير ملفوف بخيط.","آخذ الشريط وأفحصه على الضوء","أقرأ الدفتر أولاً","نيغاتيف عمره عشرون عاماً: رجلان عند جثة، وأحدهما يرتدي معطفاً رمادياً طويلاً.","دفتر إلياس: ثلاثة أسماء وتاريخ حريق المسرح، وبجانبه عبارة «الظل ليس رجلاً واحداً»."],
-    ["خطوات في الأعلى","يهتز السقف فوقكما. أحدهم يمشي في الطابق العلوي ويتعمّد أن تُسمع خطواته، كمن يريد أن يُرى ولا يُمسك.","أصعد وحدي وأطلب من لينا الانتظار","أبقى وأناديه بصوت واثق"],
-    ["الشرفة العلوية","لا أحد. فقط كاميرا قديمة على حامل ثلاثي تواجهك وضوء أحمر صغير يومض. لقد كنت مراقباً منذ لحظة وصولك.","أفحص الكاميرا","أحطّمها قبل أن تُرسل شيئاً"],
+    ["الشرفة العلوية","تسمع خطوات فوقك فتصعد وحدك إلى الشرفة. لا أحد. فقط كاميرا قديمة على حامل ثلاثي تواجهك وضوء أحمر صغير يومض. لقد كنت مراقباً منذ لحظة وصولك.","أفحص الكاميرا","أحطّمها قبل أن تُرسل شيئاً"],
     ["الحريق الجديد","ينفجر شيء في البهو ويتصاعد الدخان. تصرخ لينا من تحتك والباب الرئيسي يشتعل من جديد، كأن المسرح يعيد ما فعله قبل عشرين عاماً.","أنزل إليها عبر مخرج الطوارئ","أتسلق إلى نافذة الشرفة وأقفز"],
     ["الزقاق الخلفي","تخرجان تسعلان تحت المطر. على الجدار كُتب بالطلاء حديثاً: «الظل الأخير يقترب». ومن علبة بريد صدئة تتدلى بطاقة ملطخة بالدم.","أقرأ البطاقة","ألتقط صورة للكتابة على الجدار","بطاقة المحامي أرثر لين، عليها أثر دم حديث.","صورة الكتابة الجدارية: الخط يطابق خط التهديد الهاتفي."],
     ["الفجر","تأخذ لينا إلى مكان آمن، وتنظر إلى الشريط والدفتر وهما يرتجفان في يدك. الأسماء الثلاثة تحمل اسماً واحداً مألوفاً: أرثر لين. الصياد... أم أول فريسة؟","أتجه إلى مكتب أرثر لين وأُنهي الفصل"]
@@ -598,8 +604,152 @@ const STORY = {
     "المطاردة|تتبع السيارة عبر شوارع هارلم المبللة والمطر يحجب الرؤية.",
     "التقاطع|السيارة تتوقف عند محطة مترو مهجورة. لينا تُدفع إلى الداخل.",
     "الباب الحديدي|تلحق بهم إلى النفق وصوت القطار يرتجّ في العتمة."
-  ], "تسجيل صوتي قديم للينا عام 1998 تذكر فيه ثلاثة رجال ورابعاً بكاميرا.", "رسالة بأحمر الشفاه على مرآة لينا: «لم أخنك».")
+  ], "تسجيل صوتي قديم للينا عام 1998 تذكر فيه ثلاثة رجال ورابعاً بكاميرا.", "رسالة بأحمر الشفاه على مرآة لينا: «لم أخنك»."),
+  10: mk3("نفق المترو", "The Subway Tunnel", "نجت لينا، لكنها لم تنجُ من الذاكرة. وما قالته يقودك إلى أرشيف المدينة.", "Lena survived, but not her memories. What she said leads you to the city archive.", ["محطة هارلم|رصيف مهجور وقطار صدئ يهتز في الظلام.", "النفق|أصوات رجال وخطوات تبتعد. ضوء مصباح يلوح في آخر الممر.", "الاشتباك|تلتقي بالرجل ذي المعطف الرمادي. يطلق النار ويهرب.", "لينا|تجدها مقيّدة في حجرة صيانة، شاحبة لكنها حيّة.", "المعطف|يترك الهارب خلفه معطفاً، وفي جيبه ورقة بخط وولف.", "الحقيقة|تبكي لينا: «أبي لم يمت في الحريق. قتلوه قبلها.»", "السر|تهمس: «النيغاتيف الأصلي مخبأ في أرشيف المدينة.»", "الخروج|تحملها نحو السطح بينما يهتز النفق خلفكما.", "المستشفى|الأطباء يؤكدون أنها ستنجو. على الباب تجد حارساً غريباً.", "الحارس|تصرفه بحزم وتتأكد أنه كان مرسلاً لإنهاء المهمة."], ["Harlem Station|An abandoned platform and a rusted train trembling in the dark.", "The Tunnel|Men's voices, footsteps fading. A lamp sways at the end of the corridor.", "The Clash|You meet the man in the gray coat. He fires, then flees.", "Lena|You find her bound in a maintenance room, pale but alive.", "The Coat|He leaves his coat behind, a note in Wolfe's hand inside the pocket.", "The Truth|Lena weeps: \"My father didn't die in the fire. They killed him before it.\"", "The Secret|She whispers: \"The original negatives are hidden in the city archive.\"", "The Exit|You carry her toward the street as the tunnel shakes behind you.", "The Hospital|Doctors confirm she will live. At her door stands a stranger posing as a guard.", "The Guard|You stop him firmly and confirm he was sent to finish the job."], ["ورقة بخط وولف في جيب معطف الهارب: «لا شهود».", "شهادة لينا: والدها قُتل قبل الحريق."], ["Note in Wolfe's hand in the fugitive's coat: \"No witnesses.\"", "Lena's testimony: her father was killed before the fire."]),
+  11: mk3("أرشيف 1998", "The 1998 Archive", "التقرير المفقود لم يُسرق فقط، بل استُبدل بآخر مزوّر وُقّع باسم والدك.", "The missing report wasn't only stolen; it was replaced with a forgery signed in your father's name.", ["البلدية|قبو الأرشيف بارد ورائحة ورق متعفن تعمّ المكان.", "الأمين|الأمين العجوز يرتجف: «سبقكَ أحدهم بساعة.»", "الرفوف|مئات الصناديق مرتبة بالسنوات، وصندوق 1998 مكسور القفل.", "التقرير|ملف الحريق مختوم باسم المحقق وولف: «حادث كهربائي».", "النيغاتيف|في قاع الصندوق مظروف مموّه، فيه نيغاتيف مخبأ.", "الصورة|الظل المحفور على جدار المسرح يعود لرجل بقبعة وضابط يحمل شارة.", "التوقيع|على تقرير مخالف توقيع والدك، وفوقه ختم «مرفوض».", "الإنذار|يدوّي جرس الأرشيف، وأحدهم أغلق الباب الرئيسي.", "المخرج|تهرب عبر نفق الصيانة والملف تحت معطفك.", "السطح|تقف تحت المطر وتدرك أن والدك لم يكن أحمق، بل كان وحيداً."], ["City Hall|The archive basement is cold, thick with the smell of moldy paper.", "The Clerk|The old clerk trembles: \"Someone beat you here by an hour.\"", "The Shelves|Hundreds of boxes sorted by year; the 1998 box has a broken lock.", "The Report|The fire file is stamped with Detective Wolfe's name: \"electrical accident.\"", "The Negative|At the bottom lies a disguised envelope holding a hidden negative.", "The Photo|The shadow on the theater wall belongs to a man in a hat carrying an officer's badge.", "The Signature|A dissenting report bears your father's signature, stamped \"rejected.\"", "The Alarm|The archive bell rings; someone has locked the main door.", "The Exit|You escape through the maintenance tunnel, the file under your coat.", "The Roof|In the rain you realize your father wasn't a fool, only alone."], ["نيغاتيف أصلي لظل رجل بقبعة وشارة ضابط على جدار المسرح.", "تقرير مخالف بتوقيع والدك عليه ختم «مرفوض»."], ["Original negative: a shadow of a man in a hat with an officer's badge on the theater wall.", "Dissenting report signed by your father, stamped \"rejected.\""]),
+  12: mk3("دفتر الأب", "Father's Notebook", "ما ورثتَه لم يكن دفتراً، بل قضية أبيك المؤجلة... وقد صارت قضيتك.", "What you inherited was no notebook, but your father's postponed case... and now it is yours.", ["بيت الأم|منزل قديم في كوينز يفوح بالقهوة والذكريات.", "الأم|أمك تتفاجأ بزيارتك. «لماذا الآن؟ بعد كل هذه السنين؟»", "العلية|تصعد إلى العلية وتفتح صندوق والدك الخشبي.", "الدفتر|دفتر صغير بغلاف جلدي، مملوء بأسماء وتواريخ.", "الاسم|كتب والدك: «وولف يعرف أكثر مما يقول. أخاف على ابني.»", "الحقيقة|أمك تعترف: «هددوه، فصمت لأجلنا. ثم قتلوه كحادث.»", "الحادث|تقرأ سطوراً عن سيارة تعطلت فرامل قبل وفاته بيوم.", "الدمعة|تجلس وحدك تقرأ، والمطر يغسل نافذة الطفولة.", "القرار|تقسم ألا يمر عامٌ آخر والظل حر.", "الرحيل|تودع أمك وتتجه نحو الغراب الأزرق."], ["Mother's House|An old house in Queens, smelling of coffee and memories.", "Mother|Your mother is startled. \"Why now? After all these years?\"", "The Attic|You climb to the attic and open your father's wooden chest.", "The Notebook|A small leather notebook, full of names and dates.", "The Name|Your father wrote: \"Wolfe knows more than he says. I fear for my son.\"", "The Truth|Mother confesses: \"They threatened him, so he stayed silent for us. Then they killed him as an accident.\"", "The Accident|You read of brakes that failed a day before his death.", "The Tear|You sit alone reading, rain washing the window of your childhood.", "The Vow|You swear not another year will pass with the shadow free.", "The Departure|You bid your mother goodbye and head for the Blue Raven."], ["دفتر والدك: «وولف يعرف أكثر مما يقول. أخاف على ابني.»", "ملاحظة عن فرامل سيارة عُطّلت قبل وفاة والدك بيوم."], ["Your father's notebook: \"Wolfe knows more than he says. I fear for my son.\"", "A note about car brakes sabotaged a day before your father's death."]),
+  13: mk3("دانتي يتكلم", "Dante Speaks", "اعترف دانتي بنصف الحقيقة... ومات قبل أن يقول النصف الآخر.", "Dante confessed half the truth... and died before telling the other half.", ["الغراب الأزرق|النادي خالٍ والموسيقى متوقفة، ودانتي وحده خلف البار.", "المواجهة|تضع الدفتر والنيغاتيف أمامه. يبتسم بمرارة.", "الإنكار|«لم أقتل أحداً»، يقول، ثم تهتز يده وهو يصبّ الكأس.", "الضغط|تذكّره بصموئيل هيل وبالحريق. يغمض عينيه.", "الاعتراف|«أنا أشعلتها. لين رسم الخطة، ووولف أغلق الملف.»", "إلياس|«وإلياس؟» تسأل. «ليس أنا... أقسم. الظل الأخير هو من قتله.»", "من هو؟|يفتح فمه ليقول الاسم، فيتحطم زجاج النافذة.", "الرصاصة|يسقط دانتي على الأرض والدم يلوّن البار.", "الوداع|يهمس وهو يلفظ أنفاسه: «ابحث عن لين... في بروكلين.»", "الصمت|تغطي وجهه وتغادر والمطر يعلو فوق القاعة الخالية."], ["The Blue Raven|The club is empty, the music silent; Dante stands alone behind the bar.", "Confrontation|You set the notebook and the negative before him. He smiles bitterly.", "Denial|\"I killed no one,\" he says, his hand trembling as he pours.", "Pressure|You remind him of Samuel Hill and the fire. He closes his eyes.", "Confession|\"I lit it. Lane drew the plan, Wolfe closed the file.\"", "Elias|\"And Elias?\" you ask. \"Not me... I swear. The Last Shadow killed him.\"", "Who?|He opens his mouth to say the name, and the window shatters.", "The Bullet|Dante collapses, blood coloring the bar.", "Farewell|He whispers as he dies: \"Find Lane... in Brooklyn.\"", "Silence|You cover his face and leave as rain rises over the empty hall."], ["اعتراف دانتي المسجّل: أشعل الحريق بخطة لين وتغطية وولف.", "رصاصة اخترقت نافذة النادي من اتجاه سطح قريب."], ["Dante's recorded confession: he lit the fire on Lane's plan with Wolfe's cover-up.", "A bullet through the club window from a nearby rooftop."]),
+  14: mk3("المحامي المختبئ", "The Hidden Lawyer", "لين سلّمك المفتاح الأخير، لكنه سلّمك معه سؤالاً أكبر: من هي سارة؟", "Lane handed you the last key, but along with it a bigger question: who is Sarah?", ["بروكلين|موتيل رخيص على الطريق السريع تحت ضوء متقطع.", "الغرفة 12|تطرق الباب فيُفتح قليلاً. رجل ضعيف يحمل مسدساً مرتجفاً.", "لين|«أنت ابن ذلك الضابط.» يخفض السلاح. «لقد أخطأتُ.»", "الخوف|يروي أن وولف يطهّر الدائرة: دانتي ثم هو ثم الآخرون.", "الوصية|يمدّ إليك وصية كاملة: صموئيل ورّث المسرح لابنته فكتوريا.", "السم|«من سمّمني؟» تسأل. يتردد: «من في مختبرك...».", "سارة|«سارة ميلر، ابنة أخت وولف. تعلم كل شيء عنك.»", "الصوت|صوت محرك سيارة في الخارج. يحاول لين النهوض.", "المطاردة|تسحبه عبر النافذة الخلفية وتقودان في المطر.", "الملجأ|تتركه في مكان آمن وأنت تفكّر بسارة وبصوتها المرتجف."], ["Brooklyn|A cheap motel on the highway under a flickering light.", "Room 12|You knock and the door opens slightly. A frail man with a trembling gun.", "Lane|\"You're that officer's son.\" He lowers the weapon. \"I was wrong.\"", "Fear|He says Wolfe is cleaning house: Dante, then him, then the others.", "The Will|He hands you the full will: Samuel left the theater to his daughter Victoria.", "The Poison|\"Who poisoned me?\" you ask. He hesitates: \"Someone in your lab...\"", "Sarah|\"Sarah Miller, Wolfe's niece. She knows everything about you.\"", "The Sound|A car engine outside. Lane tries to stand.", "The Chase|You drag him through the back window and drive off into the rain.", "The Refuge|You leave him somewhere safe, thinking of Sarah and her trembling voice."], ["الوصية الكاملة: صموئيل هيل ورّث المسرح لابنته فكتوريا.", "شهادة لين: سارة ميلر هي ابنة أخت وولف."], ["The full will: Samuel Hill left the theater to his daughter Victoria.", "Lane's testimony: Sarah Miller is Wolfe's niece."]),
+  15: mk3("مختبر سارة", "Sarah's Lab", "سارة لم تكن عدوة ولا صديقة، بل سجينة ظلٍّ ورثته عن عائلتها.", "Sarah was neither enemy nor friend, but a prisoner of a shadow inherited from her family.", ["مختبر الجنايات|منتصف الليل، والمختبر خالٍ إلا من أنوار الأجهزة.", "سارة|تقف عند الطاولة. «كنت أعرف أنك ستأتي.»", "المواجهة|تضع التقرير أمامها. «أنتِ ابنة أخت وولف.»", "الإنكار|ترد بصوت مبحوح: «لم أعلم بالجرائم... أقسم.»", "الأدلة|تعطيك قرصاً فيه نتائج بصمات الغريم: بصمة وولف.", "الاتصال|يرنّ هاتفها: عمها. تنظر إليك بخوف وتجيب.", "الفخ|«تعال إلى الكوخ وحدك»، يقول. تقطع الاتصال.", "القرار|«سأساعدك»، تهمس. «لكن بعد الليلة سأفقد عائلتي.»", "الخطة|تتفقان على أن تتأخر نصف ساعة ثم تتبعك.", "الطريق|تغادر المختبر والمطر يزداد شراسة."], ["Crime Lab|Midnight, and the lab is empty but for the lights of machines.", "Sarah|She stands by the bench. \"I knew you'd come.\"", "Confrontation|You lay the report before her. \"You're Wolfe's niece.\"", "Denial|She replies hoarsely: \"I didn't know of the crimes... I swear.\"", "The Evidence|She gives you a disc with the fingerprint results: Wolfe's print.", "The Call|Her phone rings: her uncle. She looks at you in fear and answers.", "The Trap|\"Come to the cabin alone,\" he says. She ends the call.", "The Decision|\"I'll help you,\" she whispers. \"But after tonight I'll lose my family.\"", "The Plan|You agree she'll delay half an hour and then follow.", "The Road|You leave the lab as the rain grows fiercer."], ["قرص نتائج: بصمة الغريم تطابق بصمة وولف.", "اتصال وولف بسارة: «تعال إلى الكوخ وحدك»."], ["Results disc: the fugitive's print matches Wolfe's.", "Wolfe's call to Sarah: \"Come to the cabin alone.\""]),
+  16: mk3("كوخ وولف", "Wolfe's Cabin", "لم يكن الكوخ فخاً للقتل فقط، بل مسرحاً لاعتراف يريده وولف أن يُسمع.", "The cabin was no mere trap to kill; it was a stage for a confession Wolfe wants heard.", ["شمال الولاية|غابة كثيفة وطريق موحل وكوخ خشبي تضيئه شمعة.", "الباب|يُفتح من تلقاء نفسه. الداخل دافئ ومرتب.", "المكتب|على الطاولة ملف مفتوح باسمك وصورة والدك.", "الرسالة|ورقة بخط وولف: «كنتُ أنتظرك منذ عشرين عاماً.»", "الدفتر|دفتر سميك فيه كل قضايا ‹الظل› منذ 1998.", "الحقيقة|تقرأ أن وولف لم يعمل وحده: ثلاثة أسماء كبيرة في الشرطة.", "الصوت|تسمع طلقة بعيدة. وولف يراقبك من النافذة.", "الهرب|تقفز من الباب الخلفي وتختبئ بين الأشجار.", "الاتصال|يرنّ هاتفك: «المصنع المهجور، منتصف الليل. أحضر الصورة.»", "الغابة|تجلس خلف جذع شجرة، وتخطط لنهاية هذه الليلة."], ["Upstate|Thick woods, a muddy road, and a wooden cabin lit by a candle.", "The Door|It opens by itself. Inside is warm and tidy.", "The Desk|On the table lies a file with your name and your father's photo.", "The Letter|A note in Wolfe's hand: \"I've been waiting for you for twenty years.\"", "The Ledger|A thick book holding every case of \"the Shadow\" since 1998.", "The Truth|You read that Wolfe did not work alone: three senior names in the force.", "The Sound|You hear a distant gunshot. Wolfe is watching you from the window.", "The Escape|You leap out the back door and hide among the trees.", "The Call|Your phone rings: \"The abandoned factory, midnight. Bring the photograph.\"", "The Woods|You sit behind a trunk and plan the end of this night."], ["دفتر وولف: سجل قضايا «الظل» منذ 1998 بأسماء كبيرة.", "رسالة وولف: «كنتُ أنتظرك منذ عشرين عاماً.»"], ["Wolfe's ledger: the log of \"Shadow\" cases since 1998 with senior names.", "Wolfe's note: \"I've been waiting for you for twenty years.\""]),
+  17: mk3("الخيانة", "The Betrayal", "ماكيني، القائد الذي ائتمنتَه، كان هو الاسم الثالث. والآن صرتَ مطلوباً.", "McKinney, the commander you trusted, was the third name. And now you are wanted.", ["مركز الشرطة|الثانية فجراً. القائد ماكيني ينتظرك في مكتبه.", "القائد|«تأخرتَ يا بني. لقد جمعتُ فريقاً للقبض على المتورطين.»", "الشك|تلاحظ على يده خاتماً يحمل رمز الظل.", "الملف|تسأله عن دفتر وولف. يبتسم: «أي دفتر؟»", "الأدلة|تحاول مغادرة الغرفة، لكن الباب يُغلق خلفك.", "الاعتقال|رجلان يمسكانك، وماكيني يأخذ الدفتر من جيبك.", "الزنزانة|تُلقى في زنزانة باردة والمطر يطرق السقف.", "سارة|تظهر سارة في الليل بمفتاح ومسدس. «لنذهب.»", "التسجيل|تعطيك تسجيلاً لماكيني يعترف لوولف على الهاتف.", "الهروب|تخرجان عبر المرآب ويطاردكما سيارتا شرطة."], ["Police HQ|Two a.m. Commander McKinney waits in his office.", "The Commander|\"You're late, son. I've assembled a team to arrest those involved.\"", "Doubt|You notice a ring on his hand bearing the shadow's emblem.", "The File|You ask about Wolfe's ledger. He smiles: \"What ledger?\"", "The Evidence|You try to leave, but the door locks behind you.", "The Arrest|Two men seize you, and McKinney takes the ledger from your pocket.", "The Cell|You're thrown into a cold cell, rain tapping the roof.", "Sarah|At night Sarah appears with a key and a pistol. \"Let's go.\"", "The Recording|She gives you a recording of McKinney confessing to Wolfe on the phone.", "The Escape|You leave through the garage with two police cars in pursuit."], ["خاتم ماكيني يحمل رمز الظل.", "تسجيل سارة: ماكيني يعترف لوولف عبر الهاتف."], ["McKinney's ring bearing the shadow's emblem.", "Sarah's recording: McKinney confessing to Wolfe by phone."]),
+  18: mk3("فخ المصنع", "The Factory Trap", "وولف خطف فكتوريا ليأخذ منك ما لا يستطيع أخذه بالقوة: الصورة الأخيرة.", "Wolfe kidnapped Victoria to take from you what force cannot: the final photograph.", ["المصنع|هيكل حديدي صدئ على ضفة النهر تحت غيوم سوداء.", "الدخول|تدخل وحدك وسارة تنتظر عند الجسر.", "الممر|رائحة الزيت وأصوات قطرات تتردد في الظلام.", "الرجال|رجلان يظهران من الظل. تقاتلهما بين الآلات.", "الكرسي|فكتوريا مربوطة وسط القاعة وعيناها تتوسلان.", "الصوت|يرتفع صوت وولف من مكبّر قديم: «ضع الصورة على الطاولة.»", "المساومة|تضع نسخة مزيفة وتحتفظ بالأصلية.", "الاشتباك|يكتشف وولف الخدعة فيطلق النار والمصباح يتحطم.", "الانفجار|ينفجر خزان قديم وتشتعل النيران كما حدث في المسرح.", "السطح|تحمل فكتوريا وتصعد، ووولف يختفي نحو برج قريب."], ["The Factory|A rusted steel hulk on the riverbank under black clouds.", "Entry|You enter alone while Sarah waits at the bridge.", "The Corridor|The smell of oil and echoing drips in the dark.", "The Men|Two men emerge from the shadows. You fight them among the machines.", "The Chair|Victoria is bound in the middle of the hall, her eyes pleading.", "The Voice|Wolfe's voice rises from an old speaker: \"Put the photograph on the table.\"", "The Bargain|You place a fake copy and keep the original.", "The Clash|Wolfe discovers the trick and fires; the lamp shatters.", "The Blast|An old tank explodes and flames rise just as at the theater.", "The Roof|You carry Victoria up while Wolfe slips toward a nearby tower."], ["الصورة المزيفة التي وضعتها وهي تحمل بصمة وولف.", "رسالة على جدار المصنع: «البرج، سطح الظل.»"], ["The fake photograph you set down now bears Wolfe's fingerprint.", "A message on the factory wall: \"The tower, the Shadow's roof.\""]),
+  19: mk3("سطح البرج", "The Tower Roof", "السلالم تنتهي هنا. وما سيحدث فوق ستحكيه المدينة دهراً.", "The stairs end here. And what happens above, the city will tell for ages.", ["برج مانهاتن|ناطحة سحاب قديمة، والسماء تشتعل ببرق أبيض.", "الصعود|تصعد مئة طابق على درج حديدي والدم يسيل من كتفك.", "الباب|يُفتح على السطح. الريح تعصف والمدينة تلمع تحتك.", "وولف|يقف عند الحافة، معطفه الرمادي يرفرف.", "الحديث|«أبوك كان أشجع مما ظننت»، يقول بهدوء.", "الاعتراف|«قتلتُ إلياس لأنه صوّر ظلّي. وقتلتُ أباك لأنه رفض.»", "التسجيل|تشغّل جهازاً صغيراً: كل كلماته مسجّلة.", "الصراع|يصوّب مسدسه وتنقضّ عليه فيهوي كلاكما نحو الحافة.", "القرار|تمسك يده وهو يتدلّى: «أُمسكك، وستُحاكَم.»", "الشرطة|تصل سارة والشرطة النزيهة، ويُقبض على وولف وماكيني."], ["Manhattan Tower|An old skyscraper, the sky ablaze with white lightning.", "The Climb|You climb a hundred floors of iron stairs, blood running from your shoulder.", "The Door|It opens onto the roof. Wind howls and the city glitters below.", "Wolfe|He stands at the edge, his gray coat flapping.", "The Talk|\"Your father was braver than I thought,\" he says calmly.", "The Confession|\"I killed Elias because he photographed my shadow. And your father because he refused.\"", "The Recording|You switch on a small device: every word recorded.", "The Struggle|He aims his gun, you lunge, and you both tumble toward the edge.", "The Decision|You grab his hand as he dangles: \"I'll hold you, and you'll stand trial.\"", "The Police|Sarah arrives with the honest police; Wolfe and McKinney are arrested."], ["تسجيل اعتراف وولف الكامل على سطح البرج.", "القبض على وولف وماكيني وإنقاذ فكتوريا."], ["Wolfe's full confession recorded on the tower roof.", "Wolfe and McKinney arrested, Victoria saved."]),
+  20: mk3("الظل الأخير", "The Last Shadow", "انتهت القضية. ظلّ والدك لم يعد وحيداً، والمدينة تنام أخيراً، وأنت تعرف أن كل ظل يستحق أن يُرى.", "The case is closed. Your father's shadow is no longer alone; the city finally sleeps, and you know every shadow deserves to be seen.", ["الفجر|يتوقف المطر لأول مرة منذ أيام. المدينة تغتسل بالذهب.", "المحكمة|يُدان وولف وماكيني وتُغلق القضية بحكم قاسٍ.", "فكتوريا|تستعيد مسرح لوكس لتحوّله إلى معرض باسم والدها.", "لينا|تغني من جديد في الغراب الأزرق بلا خوف.", "سارة|تغادر المدينة بعد أن دفعت الثمن، بقلب أخف.", "الأم|تحضن أمك وتقرأ لها دفتر أبيك للمرة الأخيرة.", "المقبرة|تضع باقة على قبر والدك. «أنهيتُ ما بدأتَ.»", "المعرض|يعرض إلياس صورته الأخيرة: ظل رجل لم يعد غامضاً.", "الكاميرا|تمسك كاميرا قديمة وتلتقط صورتك أنت، لأول مرة.", "الأفق|تنظر إلى مانهاتن وتبتسم. القضية انتهت... والحياة تبدأ."], ["Dawn|The rain stops for the first time in days. The city bathes in gold.", "The Court|Wolfe and McKinney are convicted and the case closes with a harsh sentence.", "Victoria|She reclaims the Lux Theater and turns it into a gallery in her father's name.", "Lena|She sings again at the Blue Raven, unafraid.", "Sarah|She leaves the city, having paid the price, with a lighter heart.", "Mother|You hold your mother and read her your father's notebook one last time.", "The Cemetery|You lay a bouquet on your father's grave. \"I finished what you began.\"", "The Exhibition|Elias's final photograph hangs: the shadow of a man no longer mysterious.", "The Camera|You pick up an old camera and take your own picture, for the first time.", "The Horizon|You look at Manhattan and smile. The case is over... and life begins."], ["نسخة الصورة الأخيرة لإلياس بعد أن صارت دليلاً رسمياً.", "رسالة والدك: «من ينظر إلى الظل لا يخاف الضوء»."], ["The final photograph of Elias, now official evidence.", "Your father's letter: \"He who looks at the shadow does not fear the light.\""])
 };
+
+/* ===== الترجمة الإنكليزية للفصول 1–9 (تُدمج في STORY) ===== */
+const TR = {
+1: { t: "Night in DUMBO", o: "The photograph was taken before you knew you would come. Whoever set the camera knew you would arrive... which means you have been part of this story from the start.", s: [
+ ["Manhattan — 1:41 a.m.", "Rain has been beating on your seventh-floor window since evening, and the city that never sleeps looks tired tonight.\n\nBefore you: cold coffee and unwritten reports. Then the old landline on your desk rings, the one that only rings for bad news.", ["Pick up the receiver at once", "Look out the window before answering"]],
+ ["The Call", (s) => (s.flags.sawTaxi ? "From the window you glimpse a yellow taxi parked under the streetlamp with no passenger and no movement. The moment you stare at it, its lights go out and it drifts away slowly.\n\nAt last you lift the receiver. " : "You lift the receiver before the third ring. ") + "Your partner's voice, Detective Sarah Miller:\n\n“Photographer Elias Crane was found dead in his studio in DUMBO. The door was locked from inside and the big window was open. The patrol officers say suicide... but something here doesn't feel right.”", ["“I'm on my way. Don't let anyone touch anything.”", "“Send me his file first. Who is Elias Crane?”"]],
+ ["DUMBO, Brooklyn — under the Manhattan Bridge", "Bridge lights hang over wet cobbled alleys, and a distant train rumbles overhead like thunder. The studio is in an old factory building, its iron stairs groaning in the rain.\n\nThe patrol officer meets you at the entrance: “It was locked from inside with a chain and padlock, sir. We had to cut the lock.”", ["Examine the chain and the door first", "Go straight in to see the place"]],
+ ["The Studio", (s) => (s.flags.checkedDoor ? "The chain is perfectly intact on the inside. Whoever left this place did not leave by the door.\n\n" : "") + "A wide floor with tall windows, and on taut cords hang hundreds of black-and-white photographs: shadows of passersby, cars and bridges, without faces. This was Elias's trade: photographing the city's shadows.\n\nHis body lies by the open window. The camera on its stand points at the door, not the window, and a red light glows from a room at the far end.", ["Examine the camera pointed at the door", "Head for the red light at the far end"]],
+ ["The Darkroom", (s) => (s.flags.sawCamera ? "The camera outside held no film. Whoever took it did so in a hurry.\n\n" : "") + "The red light stains everything blood-colored. The developing tray is still wet, and in the water lies an unfinished print: a wet street and a brick wall, and on it the shadow of a tall man with no features.\n\nOn a cord above you hangs a short strip of film, its last frame carefully cut out with a blade.", ["Lift the print from the tray before it spoils", "Examine the cut strip of film"], ["Print in the developer: the shadow of a tall man on a brick wall, faceless, holding what looks like a bag.", "Hanging film strip: the last frame is cut with a blade. Someone took the final picture."]],
+ ["Marco's Shop — across the street", "Marco, owner of the all-night shop, hasn't slept a wink. His hand shakes as he pours you hot coffee.\n\n“I was behind the counter when I saw him... a man in a long gray coat leaving the building a little after midnight. He wasn't running, but he never looked back. Then he got into a yellow taxi.”", ["Ask him for a precise description of the man", "Ask: who usually visited Elias?"]],
+ ["Back at the Studio", "You return upstairs. A metal film cabinet stands in the corner, its drawers arranged by date with obsessive care. Except one drawer near the bottom, with no dust on it at all.\n\nYou pull it and it slides out without resistance: empty, and on its metal lining the rectangular mark of something kept here for years.", ["Photograph the drawer and lift prints from it", "Search the rest of the cabinet for other hiding places"]],
+ ["Sarah Calls", (s) => "Your phone vibrates. Sarah's voice comes in a rush:\n\n“I went through his papers. " + (s.flags.readFile ? "As in the file I sent you, he was preparing his first exhibition: ‘The Last Shadow.’ " : "He was preparing his first exhibition, titled ‘The Last Shadow.’ ") + "The opening is Friday at the Victoria Hill Gallery in Chelsea. And the last call he received tonight came from a blocked number. I don't think this is an ordinary crime.”", ["“Set up a meeting with Victoria Hill in the morning.”", "“Try tracing the blocked number first.”"]],
+ ["The Back Iron Stairs", (s) => "You climb out the back window onto the iron fire escape. Rain seeps between the steps and the alley below is drowned in darkness. On the first step lies a soaked matchbook, and on the iron fresh footprints descend toward the alley.\n\n" + (s.flags.sawTaxi ? "And at the end of the alley, a yellow taxi stands with no lights... the very one you saw from your office window, or so you think. " : "") + (s.flags.grayCoat ? "The gray coat Marco described did not leave by the door. It left from here." : ""), ["Pick up the matchbook lying by the stairs", "Follow the wet footprints down the stairs"], ["Matchbook from the “Blue Raven” club in Harlem, with a phone number written in pen.", "Wet footprints descend the iron stairs and end at the curb, where cars park."]],
+ ["Dawn — Brooklyn", "Gray light spreads over the East River as you return to the studio for a last look. Something has changed: on the stand sits a freshly developed print, still damp, which was not there an hour ago.\n\nA photograph of you, standing at the studio door. And along its edge, elegant handwriting:\n\n“The last shadow has not been taken yet, Detective. Ask yourself why they called you in particular.”\n\nCold seeps into your bones. Who was here while you were outside?", ["Keep the photo and the note, and end the chapter"]]
+]},
+2: { t: "Victoria Hill Gallery", o: "The exhibition will open soon, but the picture you seek has not yet been hung on the walls... it is hidden somewhere deeper.", s: [
+ ["Chelsea — 10 a.m.", "Your car stops before the “Victoria Hill Gallery” façade. The glass is so clean you can see your own shadow in it against the pale daylight. The scent of fine coffee and fresh paint fills the place.\n\nVictoria Hill waits by the reception desk, her face wearing a carefully studied worry.", ["Ask her straight away about her relationship with Elias", "Watch her expression and her hands first"]],
+ ["Gallery Office", (s) => (s.flags.victoriaWatch ? "You noticed her fingers trembling as she straightened the exhibition papers, despite the apparent calm of her voice.\n\n" : "") + "You sit in her back office, ringed with costly abstract paintings. Victoria says softly:\n\n“Elias was not just a photographer; he saw what we prefer not to see. He insisted on showing certain pictures that the selection committee rejected.”", ["“Which pictures did you reject?”", "“Did anyone threaten him over them?”"]],
+ ["Gallery Archive", "You ask permission to view the backups of Elias's work stored on the gallery computer. She agrees hesitantly and leaves you alone briefly in the archive room.\n\nOn the glowing screen, you find a folder protected by a password that looks like a date.", ["Try guessing the password from his birth or death date", "Search the unencrypted files in the main folder"]],
+ ["Folder Contents", (s) => (s.flags.passwordTry ? "The date didn't work, but you noticed a small loophole that bypassed the system and opened it automatically.\n\n" : "") + "The folder opens to a long list of correspondence and anonymous emails demanding Elias stop publishing ‘back street’ photos.\n\nIn one of them, a clear reference to where his last photograph was taken.", ["Copy the emails onto a flash drive", "Note the sender's alias in my notebook"], ["Emails threatening Elias to stop publishing back-street photos, specifically the riverside building.", "Sender's alias in the emails: ‘Manhattan Shadow,’ with a recurring room number."]],
+ ["Gallery Lobby", "You leave the room and meet Sarah, who has just arrived. She leans close and whispers:\n\n“Telecom checks confirm the blocked number that called Elias before his death came from a public phone near the Hamilton subway station.”", ["“Let's head to Hamilton station at once.”", "“I'll stay here to watch whoever is watching the gallery.”"]],
+ ["Hamilton Station — lower platforms", "The roar of trains, the smell of damp and old iron. You descend to the platforms where the mentioned public phone stands. Hardly anyone uses these phones today.\n\nOn the floor near the booth lies a credit card, carefully dropped.", ["Examine the card and lift its prints", "Check the station's surveillance cameras"], ["Expired credit card in the name of ‘Arthur Lane’ with strange mud traces on it.", null]],
+ ["Station Control Room", (s) => (s.flags.cctv ? "The surveillance clerk is lazy about helping you, but you press him until he plays the previous night's recordings.\n\n" : "") + "On the dim screen, a man in a gray coat leaves the phone booth at the same time as the call, his face hidden under the brim of a dark hat.\n\nThe man heads for the emergency exit leading to the street above.", ["Keep tracing his path in the recordings", "Focus on his hand and what he carried"], [null, "Surveillance footage: the man carried an old black umbrella and a small heavy leather bag."]],
+ ["Street Above — Emergency Exit", "You step into the open air where the rain keeps falling lightly. Sarah waits in the car and tells you the preliminary forensic report has just arrived, carrying an unexpected surprise.\n\n“He wasn't strangled or shot... he was poisoned in a way that only shows with careful blood analysis.”", ["“Order an urgent test for the type of poison used.”", "“Then it's an organized crime, not chance.”"]],
+ ["Investigation Office — Night", "You return to your office, the threads of the case piled high. Before you: Arthur Lane's card, the deleted emails, and the old matchbook.\n\nAll point to a single intersection: the ‘Blue Raven’ club in Harlem.", ["Prepare to go to the Blue Raven club in secret", "Request extra backup to raid the place"]],
+ ["Harlem Road", "The car moves through the darkness of Manhattan's northern streets. Your phone rings again, an unknown number this time.\n\nA rough voice says from the other end:\n\n“You're chasing shadows that don't concern you, Detective... leave the exhibition alone, or your next picture will hang on the studio walls.”\n\nThe call cuts off, and you know the game has truly begun.", ["Continue to the Blue Raven club and end the chapter"]]
+]},
+3: { t: "The Blue Raven", o: "The burned theater hides what no one has photographed for twenty years, and the fox is a mask known to everyone present that night.", s: [
+ ["Harlem — 11 p.m.", "A blue neon raven flickers above an iron door. Faint jazz seeps onto the wet pavement, and a huge guard blocks the entrance.", ["Show my badge and ask for the owner", "Enter as an ordinary customer and watch the hall"]],
+ ["The Club Hall", "Thick smoke, small tables, and a pianist ignoring everyone. On stage a singer in a black dress searches the faces for something... then her eyes settle on you and the song stops for a moment.", ["Head to the stage after the song ends", "Sit at the bar and wait for her to come"]],
+ ["The Bar", "The old bartender wipes a glass endlessly. You set the matchbook before him and his face goes pale: “This is from an old batch... we haven't handed these out for years.”", ["“Who used to take these?”", "“The number written on it, whose is it?”"]],
+ ["Dante's Office", "Dante, the club's owner, a man in a crimson suit with a smile that never reaches his eyes. “Elias was a customer who photographed backstage, nothing more.” But behind the safe lies the mark of a picture frame removed recently.", ["Ask to see the guest and reservation log", "Ask him about the picture that hung here"]],
+ ["Backstage", "In the dressing room you find a camera bag bearing Elias's name, and inside it a memory card wrapped in a handkerchief.", ["Keep the card", "Search the pockets of the hanging coats"], ["Memory card in Elias's bag: backstage photos, the last of a man shaking Dante's hand at a back door.", "Handkerchief embroidered with the letter ‘V’ in the dressing room, with a fine woman's perfume on it."]],
+ ["The Back Door", "A lock turns. You glimpse a shadow slipping into the alley and vanishing in the rain. As you follow, the door shuts behind you and a chain is locked from outside.", ["Break the side window and climb out", "Shout the singer's name for help"]],
+ ["Lena", "Lena opens the door herself. “Elias was afraid of something... the night the Lux Theater burned twenty years ago, he photographed what no one was meant to see.”", ["Ask her about the fire and its details", "Ask why she's telling me now"]],
+ ["Outside the Club", "You step out with Lena, and a black car stops at the corner without anyone getting out. Lena whispers: “That's the man who shook Dante's hand.”", ["Note the car's license plate", "Approach it carefully"]],
+ ["The Wet Pavement", "A folded paper falls from Lena's pocket: “Lux Theater — 125th Street.” And beneath it: “The last shot, behind the curtain.”", ["Pick up the paper and verify the handwriting", "Ask Lena to accompany me to the theater"], ["Note in Elias's hand: “Lux Theater — 125th Street. The last shot, behind the curtain.”", "The black car's plate is registered to a shell company."]],
+ ["Before Dawn", "You open the card on your laptop and a single picture appears: a woman in a fox mask before a painting, and on the wall behind her, the shadow of a tall man. Lena agrees to meet you at the burned theater.", ["Keep the card and end the chapter"]]
+]},
+4: { t: "The Burned Lux Theater", o: "Arthur Lane's name rings like an alarm. And you realize Lena was never a passing witness, but a child who grew up inside that fire.", s: [
+ ["125th Street — 3 a.m.", "The Lux Theater stands a black husk alone in the rain, its charred sign dangling like a dead tongue. Lena waits at the side door, pale as one who has returned to a place she never wanted to see again.", ["Enter with her by the side door", "Circle the building first"]],
+ ["The Burned Lobby", "Black walls, melted carpet, and the smell of old ash that hasn't faded in twenty years. On the floor, fresh shoe prints head toward the stage, as if someone got here before you.", ["Follow the prints carefully", "Switch off my flashlight and listen"]],
+ ["Lena Speaks", "Lena stops at the balcony stairs. “I was nine. My father was the theater's guard, and I slept backstage that night. I woke to men arguing... then to the fire.”", ["Ask what exactly she heard", "Stay silent and let her go on"]],
+ ["The Stage", "At the center of the stage hangs a charred red curtain, and behind it a wall still bearing the shadow of a tall man engraved in soot, as if the fire kept it and dared not erase it.", ["Examine the engraved shadow closely", "Stand where the photographer stood to see its angle"]],
+ ["The Odd Plank", "At the base of the wall sits a wooden plank newer than everything around it. Lena whispers: “This is where Elias stood every time he came.”", ["Pull the plank carefully", "Tap it to hear whether it's hollow"]],
+ ["The Cavity", "Behind the plank, a rusted metal box, and inside it a negative strip and a small notebook tied with string.", ["Take the negative and examine it against the light", "Read the notebook first"], ["Twenty-year-old negative: two men at a body, one wearing a long gray coat.", "Elias's notebook: three names and the date of the theater fire, beside the phrase “The shadow is not one man.”"]],
+ ["The Balcony", "You hear footsteps above and climb alone to the balcony. No one. Only an old camera on a tripod facing you, a small red light blinking. You have been watched since the moment you arrived.", ["Examine the camera", "Smash it before it sends anything"]],
+ ["The New Fire", "Something explodes in the lobby and smoke rises. Lena screams from below and the main door catches fire again, as if the theater were repeating what it did twenty years ago.", ["Go down to her through the emergency exit", "Climb to the balcony window and jump"]],
+ ["The Back Alley", "You both stumble out coughing in the rain. On the wall, freshly painted: “The Last Shadow is coming.” And from a rusted mailbox hangs a blood-stained card.", ["Read the card", "Photograph the writing on the wall"], ["Lawyer Arthur Lane's card, with a fresh bloodstain.", "Photo of the graffiti: the handwriting matches the phone threat."]],
+ ["Dawn", "You take Lena somewhere safe, then look at the negative and the notebook trembling in your hand. The three names carry one familiar name: Arthur Lane. The hunter... or the first prey?", ["Head to Arthur Lane's office and end the chapter"]]
+]},
+5: { t: "The Vanished Lawyer", o: "Friday is near. The gallery is the new theater, and you alone know every face will be there.", s: [
+ ["Wall Street — 9 a.m.", "A glass skyscraper mirrors a gray sky and hides offices that know the city's secrets. “Lane & Associates” is on the thirty-second floor.", ["Request an appointment as an official detective", "Go up without announcing myself"]],
+ ["Reception", "The secretary speaks in a muffled voice: Mr. Lane hasn't come in since yesterday, his office is locked and his phone is off. She adds: “He was afraid of something.”", ["Demand the office be opened by official order", "Ask her what he was afraid of"]],
+ ["The Lavish Office", "A carefully arranged mess: scattered papers and a half-full glass, with a bitter-almond smell rising from it. Whoever left this glass wanted someone to reach his secret.", ["Keep the glass for analysis", "Search the desk drawers"]],
+ ["The Bottom Drawer", "A file titled “1998 Batch,” empty but for an envelope sealed with red wax bearing the Lux Theater seal.", ["Open the envelope carefully", "Keep it sealed for the lab"]],
+ ["The Envelope", "Inside: a truncated will and an old photo of three men standing like victors before the theater two days before it burned.", ["Study the men's features closely", "Read the will line by line"], ["1998 photo: three men before the Lux Theater, the third's face deliberately scratched out.", "Truncated will bequeathing “the Shadow's share” to an unnamed person."]],
+ ["Sarah's Call", "Sarah calls: “The poison is from old developing chemicals, extremely rare. Whoever has it was close to Elias.” Then her voice drops: “Careful... someone in the lab is asking about you.”", ["Ask her to trace who bought the poison", "Ask for a list of Elias's crew"]],
+ ["The Hidden Safe", "Behind an oil painting, a small safe stands open and empty, and on its floor a fresh black ink stain trails toward the window.", ["Lift prints from the safe", "Measure the direction of the ink trail"]],
+ ["Sound in the Hallway", "Quick footsteps approach. You grip your pistol and listen to the rain on the glass, and to your own heart.", ["Wait behind the door", "Open the door suddenly"]],
+ ["The Adversary", "A man in a long gray coat flees down the hallway and throws a bag behind him. From the bag falls a phone lighting with a new message.", ["Grab the bag", "Chase the man"], ["Adversary's phone: “Friday, Victoria Gallery, an hour before the opening.”", "Torn glove on the left hand of the man in the gray coat."]],
+ ["Evening", "You return to your office as the threads tangle: the Blue Raven, the burned theater, Lane, and the coming Friday. You realize the Shadow is not a single killer but a network, and that you are now part of it.", ["Prepare for opening night and end the chapter"]]
+]},
+6: { t: "Opening Night", o: "The masks fell in the hall, but the most important face is still hidden.", s: [
+ ["Chelsea Gallery", "Friday, 9 p.m. Guests arrive in masks and raincoats, picture frames gleaming under the lights."],
+ ["Entrance Hall", "Victoria Hill greets you with a tense smile. “I didn't expect you to come, Detective.”"],
+ ["Among the Crowd", "A woman in a fox mask stands before a large picture, then turns toward you slowly."],
+ ["The Great Picture", "The painting shows a wet street and a tall man's shadow. Beneath it: “The Last Shadow — Elias Crane.”"],
+ ["Behind the Painting", "Behind the frame you find an envelope taped there, holding a small key and a locker number."],
+ ["Blackout", "The lights suddenly go out and a scream rises. When light returns, the fox-mask woman has vanished."],
+ ["Side Corridor", "A trace of fine perfume and a black glove lead toward the lower floor."],
+ ["Storeroom", "Among crates you see a shadow moving. A faint voice whispers: “Stay away from this case.”"],
+ ["The Mask Falls", "You find the mask by the door and inside it a card: “My father's notebook knows the truth.”"],
+ ["Midnight", "The opening ends in muffled chaos. You realize Victoria knows more than she says."]],
+ c: ["Small locker key behind the “Last Shadow” painting at the gallery.", "Card inside the fox mask: “My father's notebook knows the truth.”"] },
+7: { t: "Victoria's Confession", o: "The notebook Victoria spoke of may change everything... if it exists.", s: [
+ ["Victoria's Apartment", "Victoria invites you to her apartment and serves tea with a trembling hand. “My father Samuel Hill owned the Lux Theater.”"],
+ ["The Parlor", "“The theater burned in 1998 with my father inside. They called it an accident, and I never believed it.”"],
+ ["Family Photo", "On the shelf is a photo of a father and daughter before the theater. Behind them, a man resembling the third in the lawyer's photo."],
+ ["The Question", "You ask about Elias. “He visited me every week. He found something and wanted to show it publicly.”"],
+ ["The Locker", "The gallery key opens an old locker in her bedroom holding a leather notebook in Samuel's hand."],
+ ["A Knock", "Someone knocks violently at the door. Victoria goes pale and points to the back window."],
+ ["The Rooftop", "You flee by the fire escape with rain striking your faces, and hear gunfire from below."],
+ ["The Alley", "A man in a torn glove waves a pistol then vanishes between two parked cars."],
+ ["The Notebook", "On the last page, the name Wolfe, the investigating officer, and beside it: “Took the money and closed the file.”"],
+ ["A New Dawn", "You shelter Victoria in a small hotel and resolve to find Wolfe before he finds you."]],
+ c: ["Samuel Hill's notebook: Officer Wolfe's name beside “Took the money and closed the file.”", "Family photo before the Lux Theater showing a man resembling lawyer Lane."] },
+8: { t: "The Hidden Photo Room", o: "Behind the wall lies another room, and in it the face of a man no one thought alive.", s: [
+ ["Gallery at Night", "You return to the gallery after closing. The guard sleeps and the halls are dark except for the green glow of the emergency exit."],
+ ["The Strange Wall", "The main hall's wall sits closer than its true size. There is a void behind it."],
+ ["The Secret Door", "Behind a huge painting, a small wooden door locked with a digital lock."],
+ ["The Code", "The locker number in the envelope is the code. The lock opens with a soft click."],
+ ["The Room", "Hundreds of hidden photos of people asleep in their homes. Elias was watching those around him."],
+ ["The Cropped Photo", "A photo of you beside your late father before police headquarters in 1998."],
+ ["The Shadow", "You hear breathing behind you. Someone has been watching since you entered."],
+ ["The Confrontation", "The man in the gray coat raises his arm toward you, then flees through the emergency exit."],
+ ["The Printer", "On an old printer a list titled “1998 Witnesses” with phone numbers."],
+ ["The Names", "The first name on the list: ‘Lena Hart.’ The singer who helped you. What is she hiding?"]],
+ c: ["“1998 Witnesses” list that includes Lena Hart's name.", "Photo of you with your father before police headquarters in 1998."] },
+9: { t: "Lena's Disappearance", o: "Everyone who nears the truth vanishes, and whoever leaves it behind dies.", s: [
+ ["Harlem — Dawn", "You reach Lena's apartment to find the door slightly ajar and the phone ringing without stop."],
+ ["The Apartment", "A deliberate mess. Torn papers, a broken glass, and a footprint on the carpet."],
+ ["The Bedroom", "A half-packed suitcase and a passport under a name that isn't hers."],
+ ["The Mirror", "On the mirror, a message in lipstick: “I didn't betray you. I had no choice.”"],
+ ["Home Archive", "Under the bed lies a box of old audio recordings from 1998."],
+ ["Listening", "Young Lena's voice recounts: “I saw three men, and a fourth carrying a camera.”"],
+ ["The Stairwell", "The building's guard says two men took Lena an hour ago in a black car."],
+ ["The Chase", "You trail the car through Harlem's wet streets as rain blurs your sight."],
+ ["The Junction", "The car stops at an abandoned subway station. Lena is shoved inside."],
+ ["The Iron Door", "You follow them into the tunnel as a train's roar shakes the darkness."]],
+ c: ["Young Lena's 1998 audio recording mentioning three men and a fourth with a camera.", "Lipstick message on Lena's mirror: “I didn't betray you.”"] }
+};
+for (const k in TR) {
+  const ch = STORY[k], T = TR[k]; ch.title_en = T.t; ch.outro_en = T.o;
+  T.s.forEach((e, i) => {
+    const st = ch.stages[i + 1]; st.en = { scene: e[0], text: e[1] };
+    st.choices.forEach((c, j) => {
+      c.te = e[2] ? e[2][j] : GE[i][j];
+      const ce = e[3] ? e[3][j] : (T.c && (i === 4 ? T.c[0] : i === 8 ? T.c[1] : null));
+      if (c.clue && ce) c.clue = c.clue + " | " + ce;
+    });
+  });
+}
+
+
+const CH_OPT = {
+6: ["أتجول بين الضيوف وأحصي الأقنعة|Circulate among guests counting masks","أبحث عن فكتوريا أولاً|Look for Victoria first","أسألها عن الدعوة التي وصلتني|Ask her about the invitation I received","ألاحظ من يراقبنا من بعيد|Notice who watches us from afar","أقترب من امرأة القناع ببطء|Approach the fox-mask woman slowly","أترك الحشد يكشفها بنفسه|Let the crowd expose her itself","أفحص توقيع الصورة وإطارها|Examine the picture's signature and frame","أحدّق في الظل كما فعل إلياس|Stare at the shadow as Elias did","أحتفظ بالمفتاح كدليل|Keep the key as evidence","أقرأ رقم الخزانة أولاً|Read the locker number first","أثبّت موقعي قرب الباب|Hold my position near the door","أتحرك نحو مكان الصرخة|Move toward where the scream came from","أتتبع أثر العطر|Follow the scent trail","أفحص القفاز الأسود|Examine the black glove","أبحث عن مصدر الهمس|Search for the source of the whisper","أنتظر في العتمة حتى يتحرك|Wait in the dark until it moves","أقرأ البطاقة بعناية|Read the card carefully","أفحص القناع بحثاً عن بصمات|Check the mask for prints"],
+7: ["أسألها عن والدها صراحة|Ask her plainly about her father","أصغي إلى ما تتجنبه|Listen for what she avoids","أطلب تفاصيل الحادث|Ask for the accident's details","أسألها: من استفاد من الحريق؟|Ask: who benefited from the fire?","أفحص الصورة العائلية|Examine the family photo","أسألها عن الرجل خلفهما|Ask about the man behind them","أسألها عمّا وجده إلياس|Ask what Elias found","أسألها لماذا لم تبلغ الشرطة|Ask why she never told the police","أفتح الخزانة وأقرأ الدفتر|Open the locker and read the notebook","أفحص الخزانة بحثاً عن مخبأ آخر|Check the locker for another hiding place","أُخرج مسدسي وأتحرك نحو الباب|Draw my pistol and move to the door","أسحب فكتوريا إلى النافذة|Pull Victoria to the window","أحمي فكتوريا وأنزل أولاً|Protect Victoria and go down first","أرد بإطلاق النار|Return fire","ألاحق الرجل في الزقاق|Pursue the man into the alley","أعود لحماية فكتوريا|Return to protect Victoria","أدوّن اسم وولف|Note Wolfe's name","أقرأ الصفحات السابقة|Read the earlier pages"],
+8: ["أتسلل من الباب الخلفي|Slip in through the back door","أقنع الحارس بفتح الغاليري|Persuade the guard to open the gallery","أقيس أبعاد القاعة|Measure the hall's dimensions","أطرق الجدار بحثاً عن فراغ|Knock the wall for a void","أفحص القفل الرقمي|Inspect the digital lock","أحرّك اللوحة الضخمة جانباً|Slide the huge painting aside","أجرّب رقم الخزانة|Try the locker number","أجرّب تاريخ الحريق|Try the fire's date","أصوّر الغرفة بأكملها|Photograph the whole room","أقرأ التواريخ على الصور|Read the dates on the photos","أقارن الصورة بذكرياتي|Compare the photo with my memories","أخفيها في جيبي|Pocket it quietly","أستدير وأضيء مصباحي|Turn and shine my flashlight","أتظاهر بأني لم أنتبه|Pretend I haven't noticed","أطلق تحذيراً وألاحقه|Fire a warning and chase him","أتركه يهرب وأتتبع أثره|Let him flee and track his trail","أطبع القائمة كاملة|Print the full list","أحفظ الأسماء الثلاثة الأولى|Memorize the first three names"],
+9: ["أدخل بحذر وأتفحص المدخل|Enter cautiously and check the doorway","أرد على الهاتف المرنّ|Answer the ringing phone","أفحص أثر القدم|Examine the footprint","أحصي ما فُقد من الشقة|Count what is missing from the flat","أفتش الحقيبة|Search the suitcase","أدقق في جواز السفر|Study the passport","أصوّر الرسالة|Photograph the message","أفكر فيمن قصدته لينا|Think of whom Lena meant","آخذ الصندوق كله|Take the whole box","أنتقي أقدم التسجيلات|Pick the oldest recordings","أستمع بتركيز لآخر التسجيل|Listen closely to the end of the tape","أعيد سماع الجزء الأول|Replay the first part","أسأله عن وصف الرجلين|Ask him to describe the two men","أسأله عن رقم السيارة|Ask for the car's plate","أقود بسرعة خلف السيارة|Drive fast after the car","أقطع الطريق من شارع جانبي|Cut through a side street","أبلّغ الدعم وأتقدم|Call for backup and advance","أتقدم وحدي بصمت|Advance alone in silence"]
+};
+for (const k in CH_OPT) CH_OPT[k].forEach((o, n) => { const c = STORY[k].stages[(n >> 1) + 1].choices[n & 1], [a, e] = o.split("|"); c.t = a; c.te = e; });
+
 
 /* =====================================================================
    2) الصوت
@@ -760,14 +910,17 @@ function setBackground(ch) {
 }
 landMQ.addEventListener("change", () => setBackground(bgCurCh));
 
+const clueText = (c) => { const p = String(c).split(" | "); return LANG === "en" ? (p[1] || p[0]) : p[0]; };
 function renderStage() {
   const chapter = STORY[state.ch];
   if (!chapter) return showComingSoon();
   const stage = chapter.stages[state.st];
   $("#hudChap").textContent = state.ch;
-  $("#hudTitle").textContent = chapter.title;
+  $("#hudTitle").textContent = (LANG === "en" && chapter.title_en) || chapter.title;
+  state.max = Math.max(state.max || 0, state.ch * 100 + state.st);
+  $("#btnPrev").disabled = state.ch === 1 && state.st === 1; $("#btnFwd").disabled = state.ch * 100 + state.st >= state.max;
   $("#hudStage").textContent = state.st;
-  $("#scene").textContent = stage.scene;
+  $("#scene").textContent = (LANG === "en" && stage.en) ? stage.en.scene : stage.scene;
   $("#dots").innerHTML = Array.from({ length: STAGES_PER_CHAPTER }, (_, i) => {
     const n = i + 1; return `<i class="${n < state.st ? "done" : n === state.st ? "now" : ""}"></i>`;
   }).join("");
@@ -776,12 +929,12 @@ function renderStage() {
   // شريط الدليل الجديد (يحجز مكانه ويظهر بعد انتهاء الكتابة)
   const clue = pendingClue; pendingClue = null;
   const bn = $("#banner"); bn.classList.remove("has", "show");
-  if (clue) { $("#bannerText").textContent = clue; bn.classList.add("has"); }
+  if (clue) { $("#bannerText").textContent = clueText(clue); bn.classList.add("has"); }
 
   Audio_.setChapter(state.ch);
   setBackground(imgNum(state.ch));
   $("#stage").scrollTop = 0;
-  const text = typeof stage.text === "function" ? stage.text(state) : stage.text;
+  const _raw = (LANG === "en" && stage.en) ? stage.en.text : stage.text; const text = typeof _raw === "function" ? _raw(state) : _raw;
   typeText(text, revealChoices);
   saveGame();
 }
@@ -821,7 +974,7 @@ function buildChoices(stage) {
   const box = $("#choices"); box.innerHTML = ""; $("#cw").classList.remove("ready");
   stage.choices.forEach((c) => {
     const b = document.createElement("button");
-    b.className = "choice"; b.textContent = c.t;
+    b.className = "choice"; b.textContent = (LANG === "en" && c.te) || c.t;
     b.onclick = () => choose(c);
     box.appendChild(b);
   });
@@ -838,6 +991,11 @@ function revealChoices() {
 }
 
 function choose(c) {
+  if (state.ch * 100 + state.st < (state.max || 0)) {   // إعادة مرحلة سبق لعبها: لا تُحتسب النقاط مرتين
+    pendingClue = null;
+    if (state.st >= STAGES_PER_CHAPTER) { if (STORY[state.ch + 1]) { state.ch++; state.st = 1; } } else state.st++;
+    return renderStage();
+  }
   if (c.intuition) state.intuition += c.intuition;
   if (c.logic) state.logic += c.logic;
   if (c.flag) state.flags[c.flag] = true;
@@ -845,7 +1003,7 @@ function choose(c) {
   if (c.clue && !state.clues.includes(c.clue) && (state.cc || 0) < MAX_CLUES_PER_CHAPTER) {
     state.clues.push(c.clue);
     state.cc = (state.cc || 0) + 1;
-    if (state.st >= STAGES_PER_CHAPTER) { toast("📓 دليل جديد في المفكرة"); Audio_.playClue(); } else pendingClue = c.clue;
+    if (state.st >= STAGES_PER_CHAPTER) { toast(I("toastClue")); Audio_.playClue(); } else pendingClue = c.clue;
   }
   if (state.st >= STAGES_PER_CHAPTER) return endChapter();
   state.st++;
@@ -854,14 +1012,14 @@ function choose(c) {
 
 function endChapter() {
   const chapter = STORY[state.ch];
-  $("#endKicker").textContent = `نهاية الفصل ${state.ch}`;
-  $("#endTitle").textContent = chapter.title;
-  $("#endText").textContent = chapter.outro || "";
+  $("#endKicker").textContent = (LANG === "en" ? `End of Chapter ${state.ch}` : `نهاية الفصل ${state.ch}`);
+  $("#endTitle").textContent = (LANG === "en" && chapter.title_en) || chapter.title;
+  $("#endText").textContent = ((LANG === "en" && chapter.outro_en) || chapter.outro) || "";
   $("#stClues").textContent = state.clues.length;
   $("#stIntuition").textContent = state.intuition;
   $("#stLogic").textContent = state.logic;
   const hasNext = !!STORY[state.ch + 1];
-  $("#btnNext").textContent = hasNext ? "الفصل التالي" : "الفصل التالي (قريباً)";
+  $("#btnNext").textContent = hasNext ? I("nextC") : I("nextC") + (LANG === "en" ? " (soon)" : " (قريباً)");
   $("#btnNext").disabled = !hasNext;
   // نحفظ بداية الفصل التالي كي يتابع اللاعب منها
   if (state.ch < TOTAL_CHAPTERS) { state.ch++; state.st = 1; state.cc = 0; }
@@ -920,8 +1078,8 @@ function closeModals() { document.querySelectorAll(".modal").forEach(m => m.clas
 
 function openNotes() {
   $("#notesList").innerHTML = state.clues.length
-    ? state.clues.map(c => `<div class="clue">${c}</div>`).join("")
-    : '<div class="empty">لا توجد أدلة بعد. افحص كل شيء بعناية.</div>';
+    ? state.clues.map(c => `<div class="clue">${clueText(c)}</div>`).join("")
+    : `<div class="empty">${I("noClues")}</div>`;
   openModal("notesModal");
 }
 
@@ -950,8 +1108,8 @@ $("#btnMute").onclick = () => { Audio_.muted = !Audio_.muted; Audio_.apply(); };
 
 let LANG = (() => { try { return localStorage.getItem("ls_lang") || "ar"; } catch (e) { return "ar"; } })();
 const L = {
-  ar: { sub: "قصة بوليسية تفاعلية · نيويورك", title: "الظل الأخير", tag: "مدينة لا تنام، ومصوّر وُجد ميتاً، وصورة أخيرة لم تُلتقط بعد. كل خيار تتخذه يترك أثراً.", new: "لعبة جديدة", cont: "متابعة التحقيق", settings: "الإعدادات", exit: "خروج", setT: "⚙️ الإعدادات", mus: "مستوى الموسيقى", sfx: "مستوى المؤثرات", reset: "مسح تقدم اللعبة وتصفيرها", exitG: "الخروج من اللعبة", close: "إغلاق", hint: "اضغط للمتابعة", begin: "ابدأ التحقيق", skip: "تخطّي ›", chap: "الفصل", nextC: "الفصل التالي", home: "القائمة الرئيسية", mute: "كتم الكل", unmute: "تشغيل الصوت", rc: "تنبيه: سيُحذف كل تقدمك المحفوظ ولا يمكن التراجع. هل تريد المتابعة؟", ec: "تنبيه: هل تريد الخروج من اللعبة؟ يُحفظ تقدمك تلقائياً.", bye: "أُغلق الملف... لكن الظل ما زال ينتظرك.", lang: "English", st: "المرحلة" },
-  en: { sub: "An interactive detective story · New York", title: "The Last Shadow", tag: "A city that never sleeps, a photographer found dead, and a last photograph yet to be taken. Every choice leaves a mark.", new: "New Game", cont: "Continue Investigation", settings: "Settings", exit: "Exit", setT: "⚙️ Settings", mus: "Music volume", sfx: "Effects volume", reset: "Erase game progress and reset", exitG: "Exit the game", close: "Close", hint: "Tap to continue", begin: "Begin the Investigation", skip: "Skip ›", chap: "Chapter", nextC: "Next Chapter", home: "Main Menu", mute: "Mute all", unmute: "Unmute", rc: "Warning: all saved progress will be erased and this cannot be undone. Continue?", ec: "Warning: exit the game? Your progress is saved automatically.", bye: "The file is closed... but the shadow still waits for you.", lang: "العربية", st: "Stage" }
+  ar: { sub: "قصة بوليسية تفاعلية · نيويورك", title: "الظل الأخير", tag: "مدينة لا تنام، ومصوّر وُجد ميتاً، وصورة أخيرة لم تُلتقط بعد. كل خيار تتخذه يترك أثراً.", new: "لعبة جديدة", cont: "متابعة التحقيق", settings: "الإعدادات", exit: "خروج", setT: "⚙️ الإعدادات", mus: "مستوى الموسيقى", sfx: "مستوى المؤثرات", reset: "مسح تقدم اللعبة وتصفيرها", exitG: "الخروج من اللعبة", close: "إغلاق", hint: "اضغط للمتابعة", begin: "ابدأ التحقيق", skip: "تخطّي ›", chap: "الفصل", nextC: "الفصل التالي", home: "القائمة الرئيسية", mute: "كتم الكل", unmute: "تشغيل الصوت", rc: "تنبيه: سيُحذف كل تقدمك المحفوظ ولا يمكن التراجع. هل تريد المتابعة؟", ec: "تنبيه: هل تريد الخروج من اللعبة؟ يُحفظ تقدمك تلقائياً.", bye: "أُغلق الملف... لكن الظل ما زال ينتظرك.", lang: "English", st: "المرحلة", of10: "من 10", newClue: "🔎 تم الحصول على دليل جديد", ask: "اختر إجراءك التالي:", cl: "أدلة", int: "حدس", log: "منطق", notesT: "📓 مفكرة المحقق", toastClue: "📓 دليل جديد في المفكرة", noClues: "لا توجد أدلة بعد. افحص كل شيء بعناية.", tNotes: "المفكرة", tSound: "الإعدادات", tHome: "القائمة", prev: "المرحلة السابقة", fwd: "تقدّم المرحلة" },
+  en: { sub: "An interactive detective story · New York", title: "The Last Shadow", tag: "A city that never sleeps, a photographer found dead, and a last photograph yet to be taken. Every choice leaves a mark.", new: "New Game", cont: "Continue Investigation", settings: "Settings", exit: "Exit", setT: "⚙️ Settings", mus: "Music volume", sfx: "Effects volume", reset: "Erase game progress and reset", exitG: "Exit the game", close: "Close", hint: "Tap to continue", begin: "Begin the Investigation", skip: "Skip ›", chap: "Chapter", nextC: "Next Chapter", home: "Main Menu", mute: "Mute all", unmute: "Unmute", rc: "Warning: all saved progress will be erased and this cannot be undone. Continue?", ec: "Warning: exit the game? Your progress is saved automatically.", bye: "The file is closed... but the shadow still waits for you.", lang: "العربية", st: "Stage", of10: "of 10", newClue: "🔎 New clue obtained", ask: "Choose your next move:", cl: "Clues", int: "Intuition", log: "Logic", notesT: "📓 Detective's Notebook", toastClue: "📓 New clue in the notebook", noClues: "No clues yet. Examine everything carefully.", tNotes: "Notebook", tSound: "Settings", tHome: "Menu", prev: "Previous stage", fwd: "Advance stage" }
 };
 const INTRO_EN = [
   ["New York. November.", "A city that lights up everything... and hides everything."],
@@ -964,16 +1122,17 @@ function applyLang() {
   document.documentElement.lang = LANG; document.documentElement.dir = LANG === "ar" ? "rtl" : "ltr";
   document.querySelectorAll("[data-i18n]").forEach(e => { e.textContent = I(e.dataset.i18n); });
   $("#btnLang").textContent = I("lang"); $("#btnMute").textContent = Audio_.muted ? I("unmute") : I("mute");
-  document.title = I("title"); refreshMenu();
+  document.title = I("title"); $("#btnNotes").title = I("tNotes"); $("#btnSound").title = I("tSound"); $("#btnHome").title = I("tHome"); refreshMenu();
   if ($("#intro").classList.contains("active")) renderIntro();
 }
 function refreshMenu() {
   const s = loadGame();
   $("#btnContinue").style.display = s ? "" : "none";   // المتابعة تظهر فقط بعد بدء لعبة
-  $("#btnExit").style.display = s ? "none" : "";       // الخروج في القائمة للمرة الأولى فقط
   $("#btnContinue").textContent = s ? `${I("cont")} (${I("chap")} ${s.ch}, ${I("st")} ${s.st})` : I("cont");
 }
 function doExit() { try { window.close(); } catch (e) {} document.body.innerHTML = `<div style="display:flex;height:100%;align-items:center;justify-content:center;color:#d4a24c;font:28px Amiri,serif;text-align:center;padding:20px">${I("bye")}</div>`; }
+$("#btnPrev").onclick = () => { pendingClue = null; if (state.st > 1) state.st--; else if (state.ch > 1) { state.ch--; state.st = STAGES_PER_CHAPTER; } renderStage(); };
+$("#btnFwd").onclick = () => { pendingClue = null; if (state.st < STAGES_PER_CHAPTER) state.st++; else if (STORY[state.ch + 1]) { state.ch++; state.st = 1; } renderStage(); };
 $("#btnNew").onclick = () => { startGame(true); saveGame(); refreshMenu(); };
 $("#btnLang").onclick = () => { LANG = LANG === "ar" ? "en" : "ar"; try { localStorage.setItem("ls_lang", LANG); } catch (e) {} applyLang(); };
 $("#btnExit").onclick = doExit;
